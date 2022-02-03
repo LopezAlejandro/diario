@@ -46,10 +46,30 @@ def add_entrada():
        Entrada.create(contenido=data)
        print("Su entrada ha sido guardada")
 
-def ver_entradas():
+def ver_entradas(search_query = None):
     """Ver todas las entradas"""
-    print("Ver")
+    entradas =  Entrada.select().order_by(Entrada.timestamp.desc())
 
+    if search_query:
+        entradas = entradas.where(Entrada.contenido.contains(search_query))
+
+    for entrada in entradas:
+        timestamp = entrada.timestamp.strftime("%A %B %d,%Y %I:%m%p")
+        print(timestamp)
+        print("+"*len(timestamp))
+        print(entrada.contenido)
+        print("(n) Next entrada")
+        print("(q) Quit")
+
+        next_action = input("Action: ").lower().strip()
+        if next_action == "q":
+            break
+
+
+def search_entradas():
+    """Search Entradas"""
+    search_query = input("Search query: ").strip()
+    ver_entradas(search_query)
 
 def borrar_entrada():
     """Borrar Entrada"""
@@ -58,6 +78,7 @@ def borrar_entrada():
 menu = OrderedDict([
     ("a",add_entrada),
     ("v",ver_entradas),
+    ("s",search_entradas),
     ("b",borrar_entrada)
 ])
 
